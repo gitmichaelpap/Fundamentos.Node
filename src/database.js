@@ -1,11 +1,11 @@
-import fs from 'node:fs/promises';
+import fs from "node:fs/promises";
 
-const databasepath = new URL('../db.json', import.meta.url);
+const databasepath = new URL("../db.json", import.meta.url);
 export class Database {
   #database = {};
 
   constructor() {
-    fs.readFile(databasepath, 'utf8')
+    fs.readFile(databasepath, "utf8")
       .then((data) => {
         this.#database = JSON.parse(data);
       })
@@ -33,33 +33,25 @@ export class Database {
 
     return data;
   }
-  
+
   delete(table, id) {
     if (!this.#database[table]) {
       return;
     }
 
-    const rowIndex = this.#database[table].findIndex(row => row.id === id);
+    const rowIndex = this.#database[table].findIndex((row) => row.id === id);
 
     if (rowIndex > -1) {
-      this.#database[table].splice(rowIndex, 1)
-      this.#persist()
+      this.#database[table].splice(rowIndex, 1);
+      this.#persist();
     }
   }
 
   update(table, id, data) {
-    if (!this.#database[table]) {
-      return;
+    const rowIndex = this.#database[table].findIndex((row) => row.id === id);
+    if (rowIndex > -1) {
+      this.#database[table][rowIndex] = { id, ...data };
+      this.#persist();
     }
-
-    this.#database[table] = this.#database[table].map((item) => {
-      if (item.id === id) {
-        return { ...item, ...data };
-      }
-
-      return item;
-    });
-
-    this.#persist();
   }
 }

@@ -42,8 +42,10 @@ export const routes = [
     handler(req, res) {
       const { id } = req.params;
       const { name, email } = req.body;
+
       database.update("users", id, { name, email });
-      return res.end();
+
+      return res.writeHead(204).end();
     },
   },
 ];
