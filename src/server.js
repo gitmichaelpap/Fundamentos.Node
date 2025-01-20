@@ -1,32 +1,22 @@
 import http from "node:http";
-import {randomUUID} from "node:crypto"
 import { json } from "./middlewares/json.js";
-
-// Create an HTTP server
-
-const users = [];
+import { routes } from "./routes.js";
 
 const server = http.createServer(async (req, res) => {
   const { url, method } = req;
 
   await json(req, res);
 
-  if (method === "GET" && url === "/users") {
-    return res
-      .writeHead(200, { "Content-Type": "application/json" })
-      .end(JSON.stringify(users));
-  }
+  const route = routes.find((route) => {
+    return route.method === method && route.url.test(url);
+  });
 
-  if (method === "POST" && url === "/users") {
-    const { name, email } = req.body;
+  if (route) {
+    const routParams = req.url.match(route.url);
 
-    users.push({
-      id: randomUUID(),
-      name: name,
-      email: email,
-    });
+    req.params = { ...routParams.groups };
 
-    return res.writeHead(201).end();
+    return route.handler(req, res);
   }
 
   return res.writeHead(404).end();
