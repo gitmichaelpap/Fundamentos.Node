@@ -3,7 +3,7 @@ export function buildRouteUrl(url) {
 
     const urlWithParameters = url.replace(routeParametersRegex, '(?<$1>[a-zA-Z0-9\-_]+)');
 
-    const urlRegex = new RegExp(`^${urlWithParameters}`);
+    const urlRegex = new RegExp(`^${urlWithParameters}(?<query>\\?(.*))?$`);
     
     return urlRegex;
 }
