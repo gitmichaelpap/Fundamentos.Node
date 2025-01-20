@@ -5,12 +5,12 @@ export class Database {
   #database = {};
 
   constructor() {
-    fs.readFile(databasepath)
+    fs.readFile(databasepath, 'utf8')
       .then((data) => {
         this.#database = JSON.parse(data);
       })
       .catch(() => {
-        this.#database = {};
+        this.#persist();
       });
   }
 
