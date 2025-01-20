@@ -7,7 +7,7 @@ class OneToHundred extends Readable {
     setTimeout(() => {
       const index = this.i++;
 
-      if (index < 100) {
+      if (index < 10) {
         const buffer = Buffer.from(String(index));
 
         this.push(buffer);
@@ -19,7 +19,13 @@ class OneToHundred extends Readable {
 }
 
 fetch("http://localhost:3334", {
-    method: "POST",
-    body: new OneToHundred(),
-    duplex: 'half'
+  method: "POST",
+  body: new OneToHundred(),
+  duplex: "half",
 })
+  .then(async (res) => {
+    return res.text();
+  })
+  .then((text) => {
+    console.log(text);
+  });

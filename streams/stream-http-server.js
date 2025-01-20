@@ -7,14 +7,23 @@ class InverseNumberStream extends Transform {
     const result = number * -1;
 
     console.log(`Received number: ${number}, sending back: ${result}`);
-    
+
     callback(null, Buffer.from(result.toString()));
   }
 }
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
+  const buffers = [];
 
-  return req.pipe(new InverseNumberStream()).pipe(res);
+  for await (const chunk of req) {
+    buffers.push(chunk);
+  }
+
+  const fullStream = Buffer.concat(buffers).toString();
+
+  console.log(`Received: ${fullStream}`);
+
+  return res.end(fullStream);
 });
 
 server.listen(3334);
